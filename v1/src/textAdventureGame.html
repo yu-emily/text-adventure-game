@@ -1,0 +1,123 @@
+<!--
+================================
+Coder: Emily Yu 
+Date: 02/11/2019 - 02/23/2019
+Main Related Files: textGameStyle.css and various js files
+
+Description: 
+Text adventure game where player types in instructions to forward the story.
+
+1. Create a multiple room area: have at least six areas and no more than twelve areas.
+2. The player types in directions (for example: "east", "west", "north") and then will be taken to the next room. Current game location is also described.
+3. The player picks up at least three items and uses that item in another room.  
+4. The game will have a "save" option. When the player returns to the game, in the same browser, s/he can start the game in the same room from last time. 
+5. The game has an extra puzzle element. For example, you may have a room that opens only after certain items have been picked up, or a combination of items has been used.
+6. Utilize at least one new feature from ES6. 
+7. Use Cascading Style Sheets to design the interface. Include buttons to save the game state, reload a previous game state, restart the game, or other commands. 
+8. Every room/area has its corresponding image.
+9. Demonstrate forms, evaluating form data, string methods, arrays, and array methods.
+10. Refrain from using JS libraries, such as jquery, at this time.
+11. Have a cheat-sheet at hand. 
+
+====================================
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project #1 - Text Adventure Game</title>
+    <link rel="stylesheet" href="textGameStyle.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Felipa" rel="stylesheet">
+</head>
+<body>
+   <!--an introduction to the adventure appears as a modal before game play -->
+    <div id="modalIntro" class="modal-background">
+        <div class="modal-content" id="introContent">
+            <span id="close">&times;</span>
+            <h3>The Vanishing of Mr. Strange</h3>
+            <p>Recently, you received a letter from your mysterious uncle saying he has urgent business to meet with you.</p>
+            <p>You travel to the small town of Whisper Creek but when you arrive, you're informed that your uncle has not been seen for days.</p>
+            <p>Determined to find him, you begin your journey by first investigating his residence.</p>
+        </div>
+    </div>
+    <header>
+        <div id="title">The Vanishing of Mr. Strange</div>
+        <div id="request"><label for="event">I want to: </label></div>
+        <div id="input"><input type="text" id="event"></div>
+        <!--did not implement button for enter and cheat sheet to make css within header more easier to modify-->
+        <div id="enter">Enter</div>
+        <!--cheat sheet is at first hidden from view-->
+        <div class="cheatSheet">
+            <div id="cheatSheet">Cheat Sheet</div>
+            <div id="cheatContent">
+                <h3>Quickest Gameplay</h3>
+                <p>Entrance: use mat  >  take key  >  west</p>
+                <p>Garden Room: take book  >  south</p>
+                <p>Library: use stool and book  >  take brooch  >  east  >  east  >  east</p>
+                <p>Psychic Shop: use brooch  >  use cards  >  take watch  >  north</p>
+                <p>Clock Room: use key and watch</p>                        
+            </div>
+        </div>
+    </header>
+    <section>
+       <!--designed div#container as display grid with three main parts: div#image and div#game-->
+        <div id="container">
+            <div id="image"><img src="" id="background"></div>
+            <div id="game">
+                <div>
+                   <p><em>To play the game, please type in directions: north, east, south, and west.</em></p>
+                   <p><em>Or type in actions of how you would like to interact with an object, such as: take X, use X, drop X.</em></p>
+                </div>
+                <div id="message">
+                    <p id="mapMessage"></p>
+                    <p id="gameMessage"></p>
+                    <p id="itemMessage"></p>
+                </div>
+                <div>
+                    <button class="otherButton" id="save">Save Progress</button>
+                    <button id="restore">Restore Saved Progress</button>
+                    <button class="otherButton" id="restart">Restart Game</button>
+                    <button class="otherButton" id="backpackCheck">Check My Backpack</button>
+                    <button class="otherButton" id="gameplay">Gameplay Walkthrough</button>
+                </div>
+            </div>            
+        </div>
+        <!--a page about the design/gameplay shows up as a modal if the button is clicked -->
+        <div id="modalGamePlay" class="modal-background">
+        <div class="modal-content" id="gameplayContent">
+            <span id="closeTwo">&times;</span>
+            <h3>Gameplay Walkthrough</h3>
+            <p>Within this small town, there are various objects that the player can interact with.</p>
+            <p>Some have purposes, some do not: the glass at the lighthouse, the mirror at the forest.</p>
+            <p>Some are also used in a different way: A book is not used for reading, a key is not used to unlock a door.</p>
+            <p>In a successful gameplay walkthrough, the player first looks underneath the mat to find a key. The door doesn't unlock upon using the key since it's already open. The player than wanders into a garden room and finds a book and a pair of spectacles.</p>
+            <p>If the player takes both objects, the spectacle is used when the player notices a chair set on the staircase and decides to sit down. Sitting on the chair with the glasses on, the player sees a hidden message on the wall. The wall directs the player to go to see a teller.</p>
+            <p>The book is used when the player enters the library and realizes that the stool is not tall enough for s/he to grab the shiny object and uses the book to help make that gap smaller. After a successful interaction within this scene, a brooch appears along with an invisible lock being revealed and attached to the book.</p>
+            <p>When the player has both the brooch and lock, and goes to meet with the teller, s/he will receive cards that gives the player a clue on how to unlock the book. The book opens and reveals a pocket watch hidden in the cache.</p>
+            <p>With the pocket watch in hand, the player then goes to the clock room. Using the key to rewind the clock and the pocket watch as a reference for the correct time, the player is transported to another room and has successfully finished the game.</p>
+            <!--multiple line breaks allow the player to scroll down to view the whole page (without being blocked)-->
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+    </section>
+    
+    <!-- <script src="textAdventure.js"></script>-->
+    <!-- since the original javascript file had too many lines of code, I had to seperate them; 
+        to make them all work, I could not implement "use strict" -->
+    <script src="gameInfo.js"></script>
+    <script src="gamePlay.js"></script>
+    <script src="useItem.js"></script>
+    <script src="displayGame.js"></script>
+</body>
+</html>

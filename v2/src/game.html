@@ -1,0 +1,220 @@
+<!-- 
+================================
+Coder: Emily Yu 
+Date: 03/18/2019 - 03/22/2019
+Main Related Files: style.css, play.js, greensock.js
+
+Description: 
+Text adventure game where player types in instructions to forward the story.
+
+1. Create a multiple room area: have at least 9 areas and no more than 20 areas.
+2. The player types in directions (for example: "east", "west", "north") and then will be taken to the next room. Current game location is also described.
+3. The player picks up at least 5 items and uses that item in another room.  
+4. The game will have a "save" option. When the player returns to the game, in the same browser, s/he can start the game in the same room with the same backpack objects from last time. 
+5. Have a start screen, play screen, and end screen.
+6. Update code to utilize ES6:
+(1) at least one example of template literals
+(2) use let and const
+(3) include methods such as startsWith, endsWith, and includes.
+(4) convert at least one function to an arrow function
+(5) use at least one object literal
+7. Use jQuery, Greensock or any other Javascript library in the game. 
+8. Every room/area has its corresponding image.
+9. Primary part of code should pass JSLint, ESLint, or JSHint.
+10. Add sound effects.
+11. Have a cheat-sheet at hand. 
+
+====================================
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project #2</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Condensed" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Felipa" rel="stylesheet">
+</head>
+<body>
+    <!--changed modal to a start screen -->
+    <div id="startScreen">
+        <h3>The Vanishing of Mr. Strange</h3>
+        <p>Recently, you received a letter from your mysterious uncle saying he has urgent business to meet with you.</p>
+        <p>You travel to the small town of Whisper Creek but when you arrive, you're informed that your uncle has not been seen for days.</p>
+        <p>Determined to find him, you begin your journey by first investigating his residence.</p>
+        
+        <hr>
+
+        <div id="instruction">
+            <h4>How to Play:</h4>
+            <p>To navigate around Whisper Creek, please type in directions to go <strong>north</strong>, <strong>south</strong>, <strong>west</strong>, <strong>east</strong>.</p>
+            <p>When you enter a room and wish to interact with an item, please type in instructions to <strong>take</strong> the item, <strong>use</strong> the item, or <strong>drop</strong> the item.</p>
+            <p>Ready to find this mysterious uncle while exploring this small town?</p>
+        </div>  
+        <button>Start Game</button>
+    </div>
+    
+    <div id="playScreen">
+        <header>
+            <div id="title">The Vanishing of Mr. Strange</div>
+            <div id="request"><label for="event">I want to: </label></div>
+            <div id="input"><input type="text" id="event"></div>
+            <!--did not implement button for enter and cheat sheet to make css within header more easier to modify-->
+            <div id="enter">Enter</div>
+            <!--cheat sheet is at first hidden from view-->
+            <!--updated cheat sheet-->
+            <!--used jQuery slideToggle()-->
+            <div class="cheatSheet">
+                <div id="cheatSheet">Cheat Sheet</div>
+                <div id="cheatContent">
+                    <h3>Gamplay</h3>
+                    <p>Look under the mat, you should find a key there. Take it.</p>
+                    <p>Go west and explore the garden room. Take the book with you and the spectacles (if you'd like).</p>
+                    <p>Use the spectacles where the staircase is located. Something is written on the walls.</p>
+                    <p>Enter the library and use the book. Two items will be unlocked. Do not drop the book. Make sure to have both in your backpack.</p>
+                    <p>Locate the fortune teller and trade an object with her. You've receive something in return that needs to be unlocked before heading to the clock room.</p>
+                    <p>Use the key in the clock room.</p>
+                    <p><strong>Other things you can explore:</strong></p>
+                    <p>Take/Use the glass at the lighthouse and listen as waves splash.</p>
+                    <p>Take/Use the mirror in the forest and listen as birds chirp.(Need headphones for this.)</p>
+                    <p>Explore the train tracks as a train whistles and rustles by.</p>
+                    <p>Go to the theater and see a movie using a ticket you've found.</p>
+                    <p>Hear clocks tick as you enter the clock room.</p>
+                    <p>Or cards shuffle as you meet up with the fortune teller.</p>
+                    <h2>And if you're in a hurry:</h2>
+                    <h3>Quickest Gameplay</h3>
+                    <p>Entrance: use mat  >  take key  >  west</p>
+                    <p>Garden Room: take book  >  south</p>
+                    <p>Library: use book  >  take brooch  >  east  >  east  >  east</p>
+                    <p>Psychic Shop: use brooch  >  use cards  >  take watch  >  north</p>
+                    <p>Clock Room: use key</p>                        
+                </div>
+            </div>
+        </header>
+        <section>
+           <!--designed div#container as display grid with three main parts: div#image and div#game-->
+            <div id="container">
+                <div id="image">
+                   <img src="" id="background">
+                   <div>
+                      <p><em>Type in directions: north, east, south, and west. Or type in actions: take X, use X, drop X.</em></p>
+                   </div>
+                </div>
+                <div id="game">
+                    <!--used canvas to display map (as seen in textbook) -->
+                    <canvas id="canvas" width="144" height="144"></canvas>
+                    <div id="message">
+                        <p id="mapMessage"></p>
+                        <p id="gameMessage"></p>
+                        <p id="itemMessage"></p>
+                    </div>
+                    <div>
+                        <!--added help button-->
+                        <button class="otherButton" id="help">HELP!</button>
+                        <button class="otherButton" id="save">Save Progress</button>
+                        <button id="restore">Restore Progress</button>
+                        <button class="otherButton" id="restart">Restart Game</button>
+                        <button class="otherButton" id="backpackCheck">Check My Backpack</button>
+                        <button class="otherButton" id="gameplay">Gameplay Walkthrough</button>
+                    </div>
+                </div>            
+            </div>
+            <!--a page about the design/gameplay shows up as a modal if the button is clicked -->
+            <div id="modalGamePlay" class="modal-background">
+            <div class="modal-content" id="gameplayContent">
+                <span id="closeTwo">&times;</span>
+                <h3>Gameplay Walkthrough</h3>
+                <p>Within this small town, there are various objects that the player can interact with.</p>
+                <p>Some have purposes, some do not: the glass at the lighthouse, the mirror at the forest.</p>
+                <p>Some are also used in a different way: A book is not used for reading, a key is not used to unlock a door.</p>
+                <p>In a successful gameplay walkthrough, the player first looks underneath the mat to find a key. The door doesn't unlock upon using the key since it's already open. The player than wanders into a garden room and finds a book and a pair of spectacles.</p>
+                <p>If the player takes both objects, the spectacle is used when the player notices a chair set on the staircase and decides to sit down. Sitting on the chair with the glasses on, the player sees a hidden message on the wall. The wall directs the player to go to see a teller.</p>
+                <p>The book is used when the player enters the library and realizes that the stool is not tall enough for s/he to grab the shiny object and uses the book to help make that gap smaller. After a successful interaction within this scene, a brooch appears along with an invisible lock being revealed and attached to the book.</p>
+                <p>When the player has both the brooch and lock, and goes to meet with the teller, s/he will receive cards that gives the player a clue on how to unlock the book. The book opens and reveals a pocket watch hidden in the cache.</p>
+                <p>With the pocket watch in hand, the player then goes to the clock room. Using the key to rewind the clock and the pocket watch as a reference for the correct time, the player is transported to another room and has successfully finished the game.</p>
+                <!--multiple line breaks allow the player to scroll down to view the whole page (without being blocked)-->
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+        </section>
+    </div>    
+
+   <!--end screen added with a greensock animation-->
+    <div id="endScreen">
+        <div id="blackScreen">
+            <div class="text" id="lineOne">
+                You wind the clock using the key to match the time on the watch and ....
+            </div>
+            <div class="text" id="lineTwo">
+                You discover you've been teleported.
+            </div>
+            <div class="text" id="lineThree">
+                You hear distant echoes and faint whispers.
+            </div>
+            <div class="text" id="lineFour">
+                Footsteps draw closer.
+            </div>
+            <div class="text" id="lineFive">
+                You turn. Lights start streaming into the room.
+            </div>
+        </div>
+        <div id="secretRoom">
+            <div id="congratulations">
+                <p>CONGRATULATIONS!!</p>
+                <hr>
+                <p>You have found him.</p>
+            </div>
+            <div id="endGame">
+                <p>END OF GAME.</p>
+                <hr>
+                <p>Please exit by clicking <br>the <strong>close button</strong> on your browser.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!--audio files added to be used in play.js-->
+    <audio id="lighthouse">
+        <source src="../audio/ocean-wave-1.mp3" type="audio/mp3">
+        <source src="../audio/ocean-wave-1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="forest">
+        <source src="../audio/spring-weather-1.mp3" type="audio/mp3">
+        <source src="../audio/spring-weather-1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="train">
+        <source src="../audio/train-depart-with-whistle-01.mp3" type="audio/mp3">
+        <source src="../audio/train-depart-with-whistle-01.ogg" type="audio/ogg">
+    </audio>
+    <audio id="clock">
+        <source src="../audio/clock-ticking-2.mp3" type="audio/mp3">
+        <source src="../audio/clock-ticking-2.ogg" type="audio/ogg">
+    </audio>
+    <audio id="fortune">
+        <source src="../audio/shuffling-cards-6.mp3" type="audio/mp3">
+        <source src="../audio/shuffling-cards-6.ogg" type="audio/ogg">
+    </audio>
+    
+    <script src="CSSPlugin.min.js"></script>
+    <script src="EasePack.min.js"></script>
+    <script src="TweenLite.min.js"></script>
+    <script src="TimelineLite.min.js"></script>
+    <script src="greensock.js"></script>
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script src="play.js"></script>
+</body>
+</html>

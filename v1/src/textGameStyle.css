@@ -1,0 +1,305 @@
+/*
+================================
+Coder: Emily Yu 
+Date: 02/11/2019 - 02/23/2019
+Main Related Files: textAdventureGame.html and various js files
+
+Description: 
+Text adventure game where player types in instructions to forward the story.
+
+1. Create a multiple room area: have at least six areas and no more than twelve areas.
+2. The player types in directions (for example: "east", "west", "north") and then will be taken to the next room. Current game location is also described.
+3. The player picks up at least three items and uses that item in another room.  
+4. The game will have a "save" option. When the player returns to the game, in the same browser, s/he can start the game in the same room from last time. 
+5. The game has an extra puzzle element. For example, you may have a room that opens only after certain items have been picked up, or a combination of items has been used.
+6. Utilize at least one new feature from ES6. 
+7. Use Cascading Style Sheets to design the interface. Include buttons to save the game state, reload a previous game state, restart the game, or other commands. 
+8. Every room/area has its corresponding image.
+9. Demonstrate forms, evaluating form data, string methods, arrays, and array methods.
+10. Refrain from using JS libraries, such as jquery, at this time.
+11. Have a cheat-sheet at hand. 
+
+====================================
+*/
+
+/*remove the blue highlighting of elements from chrome*/
+:focus {
+    outline: none !important;
+}
+
+body{
+    background-color: #BB75D5;
+    box-sizing: border-box;
+    /*there's 8px margin between the body and window, set margin-top to -1 px and margin-left to -2px to have the lines around the box appear*/
+    margin-top: -1px;
+    margin-left: -2px;
+    /*max-width: 1400px;*/
+}
+
+/*---PLAYER INPUT AREA/HEADER CSS---
+font-size unit is vw (viewport width) to adjust to screen size*/
+header{
+    width: 100%;
+    height: 80px;
+    display: flex;
+    border: 5px solid black;
+}
+
+/*targeting starting from the second one, every div child of the header*/
+/*neat article on targeting child elements: https://css-tricks.com/useful-nth-child-recipies/*/
+header>div:nth-child(n+2){
+    border-left: 5px solid black;
+}
+
+#title{
+    font-family: 'Felipa', cursive;
+    font-size: 2vw;
+    text-align: center;
+    width: 15%;
+    padding: 10px;
+}
+
+#request{
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 2vw;
+    text-align: center;
+    padding: 25px;
+    width: 15%;
+}
+
+#input{
+    width: 35%;
+}
+
+input[type=text]{
+    /*set height to less than 100% so as not to cover border; set width to 95% to cover the whole input area*/
+    height: 98%;
+    width: 95%;
+    border: 0;
+    background-color: #BB75D5;
+    font-size: 2vw;
+    padding-left: 15px;
+    line-height: 100px;
+}
+
+#enter{
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 2.5vw;
+    width: 15%;
+    text-align: center;
+    padding: 20px;
+}
+
+#enter:hover{
+    background-color: black;
+    color: #FDBC51;
+    font-weight: bold;
+}
+
+.cheatSheet{
+    width: 30%;
+}
+
+#cheatSheet{
+    height: 40px;
+    background-color: #FDBC51;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 2.5vw;
+    padding: 20px;
+}
+
+#cheatSheet:hover{
+    background-color: black;
+    color: #BB75D5;
+    font-weight: bold;
+}
+
+
+#cheatContent{
+    width: 25%;
+    /*added margin-top so that it aligns with/appears to slide under the button*/
+    margin-top: 5px;
+    /*hopefully this makes it easier to read*/
+    right: -10px;
+    height: 320px;
+    padding: 0 30px;
+    background-color: darkgrey;
+    position: absolute;
+    font-size: 1.5vw;
+    display: none;
+    /*allow content to be scrollable if screen-size-width is smaller*/
+    overflow-x: auto;
+    overflow-y: auto;
+    /*allows the scrollbar to show up*/
+    max-height: 100%;
+}
+
+
+/*--MODAL CSS--*/
+.modal-background{
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#modalIntro{
+     /*darker background for intro*/
+    background-color: rgb(0, 0, 0, 0.95);
+    z-index: 2;
+}
+
+#modalGamePlay{
+    background-color: rgb(0, 0, 0, 0.7);
+    z-index: 1;
+    display: none;
+}
+
+.modal-content{
+    position: relative;
+    background-color: cornsilk;
+    color: black;
+    margin: 5% auto;
+    padding: 50px;
+    width: 75%;
+    /*allows the scrollbar to show up*/
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+#introContent>h3{
+    font-family: 'Amatic SC', cursive;
+    text-align: center;
+    font-size: 50px;
+}
+
+#introContent>p{
+    font-family: 'Felipa', cursive;
+    font-size: 30px;
+}
+
+#gameplayContent>h3{
+    font-family: 'Ubuntu', sans-serif;
+    text-align: center;
+    font-size: 40px;
+}
+
+#gameplayContent{
+    width: 50%;
+    overflow-y: auto;
+}
+
+#gameplayContent>p{
+    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+}
+
+#close{
+    color: black;
+    position: relative;
+    float: right;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+#closeTwo{
+    color: black;
+    position: relative;
+    float: right;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+
+/*--MAIN AREA CSS--*/
+#container{
+    padding: 35px;
+    display: flex;
+    /*to make overflowed horizontal content float to the bottom*/
+    flex-wrap: wrap;
+}
+
+#image{
+    margin-right: 30px;
+}
+
+#background{
+    object-fit: cover;
+    display: block;
+    max-width: 600px;
+    max-height: 400px;
+    min-width: 270px;
+    min-height: 180px;
+    /*allow the image to be scaled*/
+    width: 100%;
+    margin: 0 auto;
+    border: 15px solid black;
+}
+
+#game{
+    max-width: 300px;
+    min-width: 100px;
+    /*allow the div area to be scaled*/
+    width: 100%;
+}
+
+/*I intentionally made the width of the child wider than the parent container, so that when the screen size is resized, the parent container will float to the upper row (next to the image) when the width reaches 300px instead of 550px, and the content from the div areas would appear (next to the image) without having to wait until the screen size is expanded to hold a width of 550px div (also making the content overflow out of the div area)*/
+#game>div{
+    width: 460px;
+}
+
+/*font-size unit is vw (viewport width) to adjust to screen size*/
+button{
+    border: 3px solid black;
+    background-color: #FDBC51;    
+    padding: 10px;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1.5vw;
+    font-weight: bold;
+    margin: 5px;
+}
+
+
+/*font-size unit is vw (viewport width) to adjust to screen size*/
+#message{
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 1.5vw;
+    text-align: left;
+}
+
+/*targeting every p child of #message except the last one*/
+/*neat article on targeting child elements: https://css-tricks.com/useful-nth-child-recipies/*/
+#message>p:nth-child(-n+2){
+    border-bottom: 3px solid black;
+    padding-bottom: 10px;
+}
+
+/*special css for targeting the disabled button*/
+#restore:enabled{
+    background-color: #FDBC51;   
+    color: black;
+}
+#restore, #restore:hover:enabled{
+    background-color: black;
+    color: white;
+}
+
+.otherButton:hover{
+    background-color: black;
+    color: white;
+}
+
+.otherButton:active{
+    background-color: #BB75D5;
+    color: black;
+}
